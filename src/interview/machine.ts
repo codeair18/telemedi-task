@@ -33,7 +33,8 @@ export type InterviewState = {
   extraUsed: boolean;
   heard: string | null;
   notice: string | null;
-  error: { kind: ErrorKind; stage: ErrorStage } | null;
+  // detail: techniczna przyczyna, pokazywana tylko w trybie dev.
+  error: { kind: ErrorKind; stage: ErrorStage; detail?: string } | null;
   history: Snapshot[];
 };
 
@@ -44,7 +45,7 @@ export type Action =
   | { type: 'transcript_empty' }
   | { type: 'transcribed'; text: string }
   | { type: 'analyzed'; result: TurnResult }
-  | { type: 'failed'; kind: ErrorKind; stage: ErrorStage }
+  | { type: 'failed'; kind: ErrorKind; stage: ErrorStage; detail?: string }
   | { type: 'retry' }
   | { type: 'rerecord' }
   | { type: 'dismiss_flag' }
@@ -151,7 +152,11 @@ export function reducer(state: InterviewState, action: Action): InterviewState {
           notice: 'Nie udało się przeanalizować ostatniej odpowiedzi. Lekarz zobaczy ją w pełnej transkrypcji.',
         };
       }
-      return { ...state, phase: 'error', error: { kind: action.kind, stage: action.stage } };
+      return {
+        ...state,
+        phase: 'error',
+        error: { kind: action.kind, stage: action.stage, detail: action.detail },
+      };
     case 'retry':
       return { ...state, phase: 'processing', error: null };
     case 'rerecord': {

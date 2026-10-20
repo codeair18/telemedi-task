@@ -13,7 +13,13 @@ import { Linking, ScrollView, Share, Text, View } from 'react-native';
 import { GroqError, nextTurn, transcribe } from '../src/ai/groq';
 import { buildTurnInput } from '../src/ai/prompt';
 import { FIRST_RECORDING_LIMIT_S, MAX_FOLLOWUPS, NEXT_RECORDING_LIMIT_S } from '../src/config';
-import { initialState, reducer, type Action, type InterviewState } from '../src/interview/machine';
+import {
+  initialState,
+  reducer,
+  type Action,
+  type ErrorStage,
+  type InterviewState,
+} from '../src/interview/machine';
 import {
   missingAll,
   RED_FLAG_LABELS,
@@ -36,6 +42,13 @@ function deleteRecording(uri: string | null) {
   } catch {
     // Plik mógł już zniknąć z cache; nic nie tracimy.
   }
+}
+
+// Techniczna przyczyna błędu do logów Metro i na ekran, tylko w trybie dev (bez treści wypowiedzi i klucza).
+function describeError(stage: ErrorStage, e: unknown): string {
+  const detail = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+  if (__DEV__) console.warn(`[poczekalnia] ${stage} failed`, detail);
+  return detail;
 }
 
 function formatSeconds(ms: number): string {
@@ -100,7 +113,12 @@ export default function Interview() {
       const result = await nextTurn(input, c.key, c.models.llm);
       dispatch({ type: 'analyzed', result });
     } catch (e) {
-      dispatch({ type: 'failed', kind: e instanceof GroqError ? e.kind : 'bad_response', stage: 'analyze' });
+      dispatch({
+        type: 'failed',
+        kind: e instanceof GroqError ? e.kind : 'bad_response',
+        stage: 'analyze',
+        detail: describeError('analyze', e),
+      });
     }
   }
 
@@ -116,7 +134,12 @@ export default function Interview() {
       text = await transcribe({ uri }, c.key, c.models.stt);
     } catch (e) {
       // Nagranie zostaje do ponowienia.
-      dispatch({ type: 'failed', kind: e instanceof GroqError ? e.kind : 'network', stage: 'transcribe' });
+      dispatch({
+        type: 'failed',
+        kind: e instanceof GroqError ? e.kind : 'network',
+        stage: 'transcribe',
+        detail: describeError('transcribe', e),
+      });
       return;
     }
     deleteRecording(uri);
@@ -154,6 +177,7 @@ export default function Interview() {
     // iOS: bez tego TTS gra cicho przez słuchawkę rozmów.
     await setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true });
     audioUri.current = recorder.uri;
+    if (__DEV__) console.log('[poczekalnia] nagranie', { uri: recorder.uri, durationMs });
     dispatch({ type: 'record_stop' });
     if (durationMs < MIN_RECORDING_MS) {
       deleteRecording(audioUri.current);
@@ -370,6 +394,14 @@ function ErrorScreen({ state, onRetry }: { state: InterviewState; onRetry: () =>
       <Text style={styles.body}>{ERROR_MESSAGES[kind]}</Text>
       {kind === 'auth' && <BigButton label="Przejdź do Ustawień" onPress={() => router.push('/settings')} />}
       <BigButton label="Ponów" variant={kind === 'auth' ? 'secondary' : 'primary'} onPress={onRetry} />
+      {__DEV__ && state.error?.detail && (
+        <Card>
+          <Text style={styles.label}>Szczegóły (tylko w trybie dev)</Text>
+          <Text style={styles.muted} selectable>
+            {state.error.stage}: {state.error.detail}
+          </Text>
+        </Card>
+      )}
     </>
   );
 }

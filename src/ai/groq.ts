@@ -28,8 +28,13 @@ async function groqFetch(path: string, key: string, init: RequestInit = {}): Pro
       headers: { Authorization: `Bearer ${key}`, ...init.headers },
       signal: controller.signal,
     });
-  } catch {
-    throw new GroqError('network', 'Brak połączenia z Groq albo przekroczono czas.');
+  } catch (e) {
+    const cause = controller.signal.aborted
+      ? `przekroczono czas ${REQUEST_TIMEOUT_MS / 1000} s`
+      : e instanceof Error
+        ? `${e.name}: ${e.message}`
+        : String(e);
+    throw new GroqError('network', `${path}: ${cause}`);
   } finally {
     clearTimeout(timer);
   }
@@ -38,7 +43,10 @@ async function groqFetch(path: string, key: string, init: RequestInit = {}): Pro
   if (!res.ok) {
     // Treść błędu bywa pomocna przy diagnozie (np. wycofany model), nie zawiera danych pacjenta.
     const body = await res.text().catch(() => '');
-    throw new GroqError(res.status >= 500 ? 'network' : 'bad_response', `Groq ${res.status}: ${body.slice(0, 300)}`);
+    throw new GroqError(
+      res.status >= 500 ? 'network' : 'bad_response',
+      `${path}: HTTP ${res.status} ${body.slice(0, 300)}`,
+    );
   }
   return res;
 }
@@ -55,8 +63,9 @@ export async function checkKey(key: string): Promise<'ok' | GroqErrorKind> {
 export async function transcribe(audio: AudioInput, key: string, model: string): Promise<string> {
   const form = new FormData();
   if ('uri' in audio) {
-    // React Native FormData przyjmuje plik jako { uri, name, type }.
-    form.append('file', { uri: audio.uri, name: 'answer.m4a', type: 'audio/m4a' } as unknown as Blob);
+    // React Native FormData przyjmuje plik jako { uri, name, type }; uri musi mieć schemat file://.
+    const uri = audio.uri.startsWith('/') ? `file://${audio.uri}` : audio.uri;
+    form.append('file', { uri, name: 'answer.m4a', type: 'audio/m4a' } as unknown as Blob);
   } else {
     form.append('file', audio, 'answer.m4a');
   }
