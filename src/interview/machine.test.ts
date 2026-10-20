@@ -4,6 +4,7 @@ import { MAX_FOLLOWUPS } from '../config';
 import { formatNote } from '../summary/formatNote';
 import { initialState, isInterviewDone, mergeSlots, reducer, type InterviewState } from './machine';
 import { detectRedFlagPhrases } from './redFlagPhrases';
+import { isEmptyTranscript } from './transcript';
 import { emptySlots, type Slots } from './slots';
 
 function slotsWith(values: Partial<Record<keyof Slots, string>>): Slots {
@@ -158,5 +159,18 @@ describe('formatNote', () => {
   it('flagi na górze notatki', () => {
     const note = formatNote({ slots: emptySlots(), flags: ['chest_pain'], turns: [], date: new Date() });
     expect(note.split('\n')[4]).toBe('⚠ SYGNAŁY ALARMOWE: ból w klatce piersiowej');
+  });
+});
+
+describe('isEmptyTranscript', () => {
+  it('cisza i halucynacje Whispera', () => {
+    expect(isEmptyTranscript('')).toBe(true);
+    expect(isEmptyTranscript(' . ')).toBe(true);
+    expect(isEmptyTranscript('Dziękuję.')).toBe(true);
+    expect(isEmptyTranscript('Napisy wykonane przez społeczność Amara.org')).toBe(true);
+  });
+  it('prawdziwa odpowiedź', () => {
+    expect(isEmptyTranscript('Nie mam alergii.')).toBe(false);
+    expect(isEmptyTranscript('Dziękuję, to wszystko.')).toBe(false);
   });
 });
