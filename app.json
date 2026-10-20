@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Poczekalnia",
+    "slug": "poczekalnia",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Aplikacja nagrywa Twoją odpowiedź, żeby przygotować notatkę dla lekarza."
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "scheme": "poczekalnia"
+  }
+}
