@@ -15,8 +15,6 @@ export class GroqError extends Error {
   }
 }
 
-// W aplikacji: plik z nagrania ({ uri }); w Node: Blob.
-export type AudioInput = { uri: string } | Blob;
 
 async function groqFetch(path: string, key: string, init: RequestInit = {}): Promise<Response> {
   const controller = new AbortController();
@@ -60,15 +58,11 @@ export async function checkKey(key: string): Promise<'ok' | GroqErrorKind> {
   }
 }
 
-export async function transcribe(audio: AudioInput, key: string, model: string): Promise<string> {
+// audio: w Node zwykły Blob; w aplikacji File z expo-file-system (implementuje Blob).
+// Expo podmienia globalny fetch na expo/fetch, który nie obsługuje RN-owego { uri, name, type }.
+export async function transcribe(audio: Blob, key: string, model: string): Promise<string> {
   const form = new FormData();
-  if ('uri' in audio) {
-    // React Native FormData przyjmuje plik jako { uri, name, type }; uri musi mieć schemat file://.
-    const uri = audio.uri.startsWith('/') ? `file://${audio.uri}` : audio.uri;
-    form.append('file', { uri, name: 'answer.m4a', type: 'audio/m4a' } as unknown as Blob);
-  } else {
-    form.append('file', audio, 'answer.m4a');
-  }
+  form.append('file', audio, 'answer.m4a');
   form.append('model', model);
   form.append('language', 'pl');
   form.append('response_format', 'json');

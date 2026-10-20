@@ -131,7 +131,8 @@ export default function Interview() {
     }
     let text: string;
     try {
-      text = await transcribe({ uri }, c.key, c.models.stt);
+      // File z expo-file-system: nazwa z rozszerzeniem .m4a (Whisper rozpoznaje po niej format) i bytes().
+      text = await transcribe(new File(uri.startsWith('/') ? `file://${uri}` : uri), c.key, c.models.stt);
     } catch (e) {
       // Nagranie zostaje do ponowienia.
       dispatch({

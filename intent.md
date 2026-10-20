@@ -229,7 +229,7 @@ Fazy ekranu wywiadu: `intro → asking → recording → processing → (asking 
 
 ### 7.2. Integracja z Groq: szczegóły
 
-- **STT:** `POST https://api.groq.com/openai/v1/audio/transcriptions`, multipart z polami `file` (`{ uri, name: "answer.m4a", type: "audio/m4a" }`), `model`, `language: "pl"`, `response_format: "json"` i opcjonalnie `prompt: "Wywiad lekarski przed teleporadą. Objawy, nazwy leków."`, który podbija rozpoznawanie słownictwa medycznego. Po udanej transkrypcji plik audio jest kasowany.
+- **STT:** `POST https://api.groq.com/openai/v1/audio/transcriptions`, multipart z polami `file` (`new File(uri)` z `expo-file-system`, bo `expo/fetch` w SDK 57 nie obsługuje RN-owego `{ uri, name, type }`), `model`, `language: "pl"`, `response_format: "json"` i opcjonalnie `prompt: "Wywiad lekarski przed teleporadą. Objawy, nazwy leków."`, który podbija rozpoznawanie słownictwa medycznego. Po udanej transkrypcji plik audio jest kasowany.
 - **LLM:** `POST https://api.groq.com/openai/v1/chat/completions` ze schematem z sekcji 8. Bez streamingu, bo structured outputs go nie wspierają.
 - **Test klucza:** `GET https://api.groq.com/openai/v1/models`.
 - **iOS, tryb audio:** po zakończeniu nagrywania wywołaj `setAudioModeAsync({ allowsRecording: false })`. W przeciwnym razie TTS może zagrać cicho, przez słuchawkę rozmów. Do sprawdzenia na urządzeniu.
