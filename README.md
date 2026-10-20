@@ -6,7 +6,7 @@ Pełne uzasadnienie, zakres i kontrakt AI są w [`intent.md`](intent.md).
 
 ## Uruchomienie
 
-Wymagania: Node 22+, telefon z aplikacją **Expo Go** (SDK 58) w tej samej sieci Wi-Fi co komputer.
+Wymagania: Node 22+, telefon z aplikacją **Expo Go** ze sklepu (SDK 57) w tej samej sieci Wi-Fi co komputer.
 
 ```bash
 npm install
@@ -63,6 +63,7 @@ Wywiad to opowieść, a pacjent jest chory, często starszy i ma w ręku telefon
 - **Cisza.** Nagranie krótsze niż 0,7 s oraz typowe „halucynacje” Whispera na ciszy („Dziękuję.”, „Napisy wykonane przez…”) traktujemy jako brak odpowiedzi. Nie zużywają tury.
 - **Błędy.** Zła odpowiedź modelu (po jednym ponowieniu) prowadzi do podsumowania z tym, co już jest, plus pełna transkrypcja. Brak sieci, 429 i 401 dają „Ponów” bez utraty odpowiedzi, a nagranie zostaje do ponowienia.
 - **„Powtórz pytanie”** czyta pytanie ponownie przez TTS. Bez tego po przegapieniu mowy pytanie dałoby się tylko przeczytać.
+- **Expo SDK 57 zamiast 58.** SDK 58 wyszło 15.10.2026, ale Expo Go w App Store obsługuje na razie tylko SDK 57, a projekt ma działać przez Expo Go na telefonie. `expo-asset` jest bezpośrednią zależnością, bo `expo-audio` ma go jako peer dependency `*` i bez przypięcia npm instalował wersję z SDK 58.
 - **`reasoning_effort: "low"` i `include_reasoning: false`** dla gpt-oss: mniejsze opóźnienie, a rozumowanie nie wraca w odpowiedzi.
 
 ## Blokery produkcyjne (nierozwiązane)

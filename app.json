@@ -30,7 +30,9 @@
           "microphonePermission": "Aplikacja nagrywa Twoją odpowiedź, żeby przygotować notatkę dla lekarza."
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-status-bar",
+      "expo-asset"
     ],
     "scheme": "poczekalnia"
   }

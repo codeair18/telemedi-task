@@ -201,7 +201,7 @@ Pacjent: …
 
 | Element | Wybór | Uzasadnienie |
 |---|---|---|
-| Aplikacja | Expo (najnowszy stabilny SDK), TypeScript, expo-router | Sugerowany stack, szybki start, Expo Go na telefonie. |
+| Aplikacja | Expo SDK 57, TypeScript, expo-router | Sugerowany stack, szybki start, Expo Go na telefonie. SDK 57, a nie najnowsze 58, bo Expo Go w App Store obsługuje na razie tylko SDK 57. |
 | Nagrywanie | `expo-audio` (`useAudioRecorder`, `RecordingPresets.HIGH_QUALITY`) | `expo-av` jest przestarzałe. Plik .m4a przyjmuje Whisper. |
 | STT | Groq `whisper-large-v3`, `language: "pl"` | Według Groq ma niższy WER niż wersja turbo (10,3% vs 12%). Przy nazwach leków dokładność jest ważniejsza niż ułamek sekundy. Turbo zostaje jako zapas w ustawieniach. |
 | LLM | Groq `openai/gpt-oss-120b`, `response_format: json_schema` z `strict: true`, `reasoning_effort: "low"`, `temperature: 0.2` | Strict mode daje gwarancję zgodności ze schematem, więc odpada kod naprawiający JSON. Niski reasoning ogranicza opóźnienie. |
