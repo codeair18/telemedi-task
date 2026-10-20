@@ -1,0 +1,30 @@
+WYWIAD WSTĘPNY PRZED TELEPORADĄ
+Zebrany głosowo od pacjenta przez asystenta AI. Niezweryfikowany przez personel medyczny.
+Data: 2026-10-20 21:09
+
+⚠ SYGNAŁY ALARMOWE: brak
+
+Powód zgłoszenia: gorączka, bóle mięśni i dreszcze
+  „Mam gorączkę, bóle mięśni i dreszcze.”
+Od kiedy: od wczoraj
+  „Objawy mam od wczoraj.”
+Leki (stałe i przyjęte na ten problem): paracetamol
+  „Przyjmuję tylko paracetamol.”
+Alergie, zwłaszcza na leki: brak (pacjent zaprzecza)
+  „Nie mam alergii.”
+Oczekiwanie wobec wizyty: recepty na leki
+  „Recepty na leki.”
+
+Nie ustalono: nasilenie, inne objawy, choroby przewlekłe
+
+--- Pełna transkrypcja ---
+Asystent: Proszę opowiedzieć własnymi słowami, co się dzieje: od kiedy i co najbardziej niepokoi.
+Pacjent: Mam gorączkę, bóle mięśni i dreszcze.
+Asystent: Kiedy pojawiły się te objawy?
+Pacjent: Objawy mam od wczoraj.
+Asystent: Jakie leki przyjmujesz obecnie?
+Pacjent: Przyjmuję tylko paracetamol.
+Asystent: Czy masz jakieś alergie?
+Pacjent: Nie mam alergii.
+Asystent: Jakiego efektu oczekujesz po konsultacji?
+Pacjent: Recepty na leki.
